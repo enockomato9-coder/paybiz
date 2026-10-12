@@ -8,7 +8,7 @@ the specification.
 
 ## Stage 1 — Make CI compatible with the pinned stack
 
-**Status:** Implemented locally; remote GitHub Actions run pending.
+**Status:** Implemented and committed locally as `0d0364d`; push blocked pending GitHub authentication.
 
 - Replace the obsolete Python 3.7–3.9 matrix with 3.12–3.14. Django 6.0.8
   declares Python `>=3.12`.
@@ -22,8 +22,12 @@ the specification.
 - Local evidence: Django check passed; all 11 Django tests passed; clean-lock
   npm install reported zero vulnerabilities; frontend lint and Vite production
   build passed.
-- Remaining: push the reviewed change and inspect the actual remote workflow
-  result. A local build does not prove GitHub Actions or deployment readiness.
+- Push attempt: `git push origin main` failed because no GitHub credentials
+  are available; `gh auth status` reports the CLI is unauthenticated. No
+  access token or local `.env` was requested or read.
+- Remaining: authenticate GitHub CLI, push the reviewed change, and inspect
+  the actual remote workflow result. A local build does not prove GitHub
+  Actions or deployment readiness.
 
 ## Next stages, ordered by release risk
 
@@ -90,3 +94,4 @@ the specification.
 | CI frontend quality/build checks were absent | Previous workflow ran only `python manage.py test`. | Added `npm ci`, `npm run lint`, and `npm run build`. | Remote Actions run must complete successfully. |
 | Release status could not be tracked criterion by criterion | No evidence-linked checklist report existed. | Added `docs/MVP_V1_ACCEPTANCE.md` with status, evidence, and remaining work for every checklist item. | Keep statuses synchronized with actual test/deployment evidence. |
 | Local commit signing could not find the configured private key | `git commit` reported that the configured `GitHub <noreply@github.com>` signing key has no local secret key. | I will use a one-command `commit.gpgsign=false` override for this requested local commit rather than changing repository-wide signing settings or creating a key. | Configure an approved signing key separately if signed commits are required by repository policy. |
+| Push to GitHub could not authenticate | `gh auth status` reports no authenticated GitHub account; non-interactive `git push origin main` could not obtain a password. | Left the requested commit safely in local Git; did not attempt to bypass authentication or access credentials. | Authenticate GitHub CLI in this Codespace, then retry the push and verify CI. |

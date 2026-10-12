@@ -36,6 +36,8 @@ Phase 1 — Acceptance baseline and continuous integration
 - `npm --prefix frontend run lint` — passed.
 - `npm --prefix frontend run build` — passed.
 - GitHub Actions remote result — pending; not claimed as passed.
+- Commit `0d0364d` created locally; GitHub push blocked because no GitHub CLI
+  authentication or non-interactive Git credential is available.
 - Deployment/browser smoke test — not run; no deployment target was provided.
 
 ### Problems and resolutions
@@ -48,7 +50,11 @@ Phase 1 — Acceptance baseline and continuous integration
   commits with a key whose private part is unavailable in this environment.
   I left the repository signing configuration unchanged and will use a
   one-command unsigned-commit override for the requested commit.
+- The requested push failed with `unable to get password from user`, and
+  `gh auth status` confirmed the CLI is unauthenticated. I preserved the local
+  commit and did not request, expose, or invent credentials.
 
 ### Status
-Stage 1 implemented locally. MVP v1.0 is not release-ready; see the acceptance
+Stage 1 implemented and committed locally. Push/remote CI are blocked pending
+GitHub authentication. MVP v1.0 is not release-ready; see the acceptance
 report for unmet and unverified criteria.

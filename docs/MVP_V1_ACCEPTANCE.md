@@ -27,8 +27,12 @@ release gates.
 - Django 6.0.8 package metadata requires Python `>=3.12`. The local interpreter
   is Python 3.14.2. The previous CI matrix specified Python 3.7–3.9, which
   cannot install the pinned Django dependency. I updated the workflow matrix
-  to Python 3.12–3.14 and added frontend lint/build jobs. **The updated GitHub
-  Actions workflow has not yet been verified by a remote run.**
+  to Python 3.12–3.14 and added frontend lint/build jobs.
+- I committed the inspected work locally as `0d0364d`; `.env` and `db.sqlite3`
+  are ignored and were not included. GitHub CLI reports no authenticated
+  account, and `git push origin main` failed because Git could not obtain
+  credentials. The change is committed locally but **not pushed**; the updated
+  GitHub Actions workflow has not yet been verified by a remote run.
 - The configured local database uses SQLite. No deployment database or
   deployed application was available, and I did not run a deployed smoke test.
 - I confirmed `.env` is ignored and is not a tracked Git file. Its contents
@@ -40,7 +44,7 @@ release gates.
 
 | Acceptance test ID | Status | Evidence | Remaining work |
 |---|---|---|---|
-| STAB-01 — Audit code/dependencies and preserve Git changes | PARTIAL | I inspected the Django, React, dependency, and workflow configuration. `git status` showed pre-existing modified and untracked work; I preserved it. `requirements.txt` pins Django 6.0.8, whose installed package metadata requires Python `>=3.12`. | Verify the updated GitHub Actions run; review and commit only after reviewing the complete resulting change set. |
+| STAB-01 — Audit code/dependencies and preserve Git changes | PARTIAL | I inspected the Django, React, dependency, and workflow configuration. I preserved the pre-existing work and committed it locally as `0d0364d`. `requirements.txt` pins Django 6.0.8, whose installed package metadata requires Python `>=3.12`. | Authenticate GitHub CLI, push the local commit, and verify the updated GitHub Actions run. |
 | STAB-02 — Django system checks pass | PASS | `.venv/bin/python manage.py check` — passed with no issues. | None identified for the local check. |
 | STAB-03 — Frontend production build succeeds | PASS | `npm --prefix frontend run lint` and `npm --prefix frontend run build` both passed. | Verify the same jobs complete in GitHub Actions. |
 | STAB-04 — Migrations apply to a clean and deployment database | PARTIAL | The full Django test suite created a fresh temporary database and applied the installed migrations. `config/settings.py` configures SQLite only. | Configure a supported deployment database and verify migrations against that target without replacing existing data. |
@@ -93,7 +97,7 @@ release gates.
 
 | Acceptance test ID | Status | Evidence | Remaining work |
 |---|---|---|---|
-| SEC-01 — No secrets or real customer data are committed | PARTIAL | `.env` is ignored and not tracked; `git status` showed it absent from the Git change set. The repository still has uncommitted/untracked work, so the eventual push contents have not been audited as a release commit. | Review the exact staged files and scan the final commit before pushing. |
+| SEC-01 — No secrets or real customer data are committed | PARTIAL | `.env` and `db.sqlite3` are ignored, are not tracked, and were not included in local commit `0d0364d`. The commit is not pushed; no automated secret scan or repository visibility review was available. | Run an approved secret scan and review repository visibility/access before pushing. |
 | SEC-02 — Production DEBUG is disabled | PARTIAL | `config/settings.py` defaults `DEBUG` to false, but reads the deployment value from environment and no production deployment was available. | Set and verify `DEBUG=False` in the intended deployment environment and run deployment checks. |
 | SEC-03 — Production hosts, HTTPS, CSRF, and CORS are correctly configured | PARTIAL | Local CSRF handling and trusted Vite development origins exist in `config/settings.py`; no production host/HTTPS configuration or deployed origin was verified. The frontend uses same-origin `/api` requests. | Configure and verify exact production hosts, TLS/proxy security, CSRF origin, and any required cross-origin policy. |
 | SEC-04 — Private endpoints enforce authentication and object authorization | PASS | API views explicitly reject unauthenticated users and scope non-staff querysets; authentication and cross-account tests pass. | Retest object authorization on any future mutation or detail endpoint. |
@@ -119,6 +123,7 @@ and production build. The selected Python versions are compatible with the
 installed Django 6.0.8 package's declared `Requires-Python: >=3.12`.
 
 The local Django tests, check, frontend lint, and production build passed after
-this change. The CI configuration is still **not remotely verified** until its
-GitHub Actions run completes. No real-money behavior, database reset, or
-deployment action was performed.
+this change. I committed the work locally as `0d0364d`. The push is blocked
+because GitHub CLI is unauthenticated and Git could not obtain credentials;
+the CI configuration is therefore still **not remotely verified**. No
+real-money behavior, database reset, or deployment action was performed.
