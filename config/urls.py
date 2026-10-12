@@ -18,6 +18,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from wallets import views as wallet_views
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/auth/csrf/", wallet_views.csrf_token, name="api-csrf"),
+    path("api/auth/me/", wallet_views.current_user, name="api-current-user"),
+    path("api/auth/login/", wallet_views.sign_in, name="api-login"),
+    path("api/auth/logout/", wallet_views.sign_out, name="api-logout"),
+    path("api/dashboard/", wallet_views.dashboard_summary, name="api-dashboard"),
+    path(
+        "api/transactions/",
+        wallet_views.transaction_list,
+        name="api-transactions",
+    ),
+    path(
+        "api/transactions/export.csv",
+        wallet_views.transaction_export,
+        name="api-transaction-export",
+    ),
+    path("api/wallets/", wallet_views.wallet_list, name="api-wallets"),
+    path("api/accounts/", wallet_views.account_list, name="api-accounts"),
 ]

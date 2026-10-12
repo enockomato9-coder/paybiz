@@ -34,8 +34,11 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:8000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
     "https://*.app.github.dev",
 ]
+CSRF_FAILURE_VIEW = "wallets.views.csrf_failure"
 
 
 
@@ -118,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Nairobi"
 
 USE_I18N = True
 

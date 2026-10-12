@@ -1,0 +1,755 @@
+
+import { useState } from "react";
+import {
+  LayoutDashboard,
+  ArrowLeftRight,
+  Wallet,
+  Building2,
+  Users,
+  ChartNoAxesCombined,
+  Code2,
+  Settings,
+  Bell,
+  Search,
+  ChevronDown,
+  ArrowUpRight,
+  ArrowDownRight,
+  CircleDollarSign,
+  CheckCircle2,
+  Clock3,
+  Menu,
+  Plus,
+  Download,
+  Eye,
+  MoreHorizontal,
+  CreditCard,
+  ShieldCheck,
+} from "lucide-react";
+
+import "./App.css";
+import "./paybiz-modern.css";
+import payBizLogo from "./assets/PayBizlogo.png";
+
+const navigation = [
+  { label: "Overview", icon: LayoutDashboard },
+  { label: "Transactions", icon: ArrowLeftRight },
+  { label: "Wallets", icon: Wallet },
+  { label: "Businesses", icon: Building2 },
+  { label: "Agents", icon: Users },
+  { label: "Reports", icon: ChartNoAxesCombined },
+  { label: "Developer API", icon: Code2 },
+];
+
+const transactions = [
+  {
+    code: "PBZ-804291",
+    customer: "Brian Otieno",
+    initials: "BO",
+    type: "Payment received",
+    date: "10 Oct 2026, 8:42 PM",
+    amount: 4500,
+    status: "Completed",
+  },
+  {
+    code: "PBZ-804290",
+    customer: "Grace Wanjiku",
+    initials: "GW",
+    type: "Wallet transfer",
+    date: "10 Oct 2026, 8:35 PM",
+    amount: 1250,
+    status: "Completed",
+  },
+  {
+    code: "PBZ-804289",
+    customer: "Kevin Kiptoo",
+    initials: "KK",
+    type: "Withdrawal",
+    date: "10 Oct 2026, 8:21 PM",
+    amount: 2800,
+    status: "Pending",
+  },
+  {
+    code: "PBZ-804288",
+    customer: "Faith Achieng",
+    initials: "FA",
+    type: "Payment received",
+    date: "10 Oct 2026, 8:12 PM",
+    amount: 750,
+    status: "Completed",
+  },
+  {
+    code: "PBZ-804287",
+    customer: "David Mwangi",
+    initials: "DM",
+    type: "Payment received",
+    date: "10 Oct 2026, 7:58 PM",
+    amount: 3200,
+    status: "Failed",
+  },
+];
+
+const chartData = [
+  { day: "Mon", value: 35 },
+  { day: "Tue", value: 54 },
+  { day: "Wed", value: 43 },
+  { day: "Thu", value: 72 },
+  { day: "Fri", value: 59 },
+  { day: "Sat", value: 84 },
+  { day: "Sun", value: 67 },
+];
+
+const money = (amount) =>
+  new Intl.NumberFormat("en-KE", {
+    style: "currency",
+    currency: "KES",
+    maximumFractionDigits: 0,
+  }).format(amount);
+
+function Sidebar({ activePage, setActivePage, mobileOpen, closeMobile }) {
+  return (
+    <>
+      {mobileOpen && (
+        <button
+          className="mobile-overlay"
+          aria-label="Close navigation"
+          onClick={closeMobile}
+        />
+      )}
+
+      <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
+        <div className="brand">
+          <div className="brand-mark">
+            <img src={payBizLogo} alt="PayBiz logo" />
+          </div>
+          <div>
+            <span className="brand-name">PayBiz</span>
+            <span className="brand-caption">PAYMENTS PLATFORM</span>
+          </div>
+        </div>
+
+        <div className="sidebar-label">WORKSPACE</div>
+
+        <nav className="navigation">
+          {navigation.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className={`nav-item ${
+                activePage === label ? "nav-active" : ""
+              }`}
+              onClick={() => {
+                setActivePage(label);
+                closeMobile();
+              }}
+            >
+              <Icon size={19} strokeWidth={1.8} />
+              <span>{label}</span>
+              {label === "Transactions" && (
+                <span className="nav-count">12</span>
+              )}
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-bottom">
+          <div className="security-card">
+            <div className="security-icon">
+              <ShieldCheck size={19} />
+            </div>
+            <div>
+              <strong>Secure payments</strong>
+              <p>Your financial workspace</p>
+            </div>
+          </div>
+
+          <button
+            className={`nav-item ${
+              activePage === "Settings" ? "nav-active" : ""
+            }`}
+            onClick={() => {
+              setActivePage("Settings");
+              closeMobile();
+            }}
+          >
+            <Settings size={19} strokeWidth={1.8} />
+            <span>Settings</span>
+          </button>
+
+          <div className="sidebar-footer">
+            <span className="footer-dot" />
+            <span>PayBiz Dashboard</span>
+            <span className="version">v1.0</span>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+function Header({ activePage, setMobileOpen }) {
+  return (
+    <header className="topbar">
+      <div className="topbar-left">
+        <button
+          className="icon-button mobile-menu"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open navigation"
+        >
+          <Menu size={21} />
+        </button>
+
+        <div className="breadcrumbs">
+          <span>Workspace</span>
+          <span className="breadcrumb-divider">/</span>
+          <strong>{activePage}</strong>
+        </div>
+      </div>
+
+      <div className="topbar-actions">
+        <div className="environment">
+          <span className="environment-dot" />
+          Demo environment
+        </div>
+
+        <button
+          className="icon-button notification-button"
+          aria-label="Notifications"
+          title="Notifications"
+        >
+          <Bell size={20} />
+          <span className="notification-dot" />
+        </button>
+
+        <div className="topbar-divider" />
+
+        <button className="profile-button">
+          <div className="avatar avatar-admin">EO</div>
+          <div className="profile-info">
+            <strong>Enock</strong>
+            <span>Administrator</span>
+          </div>
+          <ChevronDown size={16} />
+        </button>
+      </div>
+    </header>
+  );
+}
+
+function StatCard({
+  title,
+  value,
+  change,
+  positive,
+  icon: Icon,
+  iconClass,
+  description,
+}) {
+  return (
+    <article className="stat-card">
+      <div className="stat-top">
+        <span className="stat-title">{title}</span>
+        <div className={`stat-icon ${iconClass}`}>
+          <Icon size={20} strokeWidth={1.8} />
+        </div>
+      </div>
+
+      <div className="stat-value">{value}</div>
+
+      <div className="stat-bottom">
+        <span className={`stat-change ${positive ? "positive" : "neutral"}`}>
+          {positive ? (
+            <ArrowUpRight size={15} />
+          ) : (
+            <Clock3 size={14} />
+          )}
+          {change}
+        </span>
+        <span className="stat-description">{description}</span>
+      </div>
+    </article>
+  );
+}
+
+function PaymentChart() {
+  const maxValue = Math.max(...chartData.map((item) => item.value));
+
+  const points = chartData
+    .map((item, index) => {
+      const x = 20 + index * 60;
+      const y = 150 - (item.value / maxValue) * 115;
+      return `${x},${y}`;
+    })
+    .join(" ");
+
+  const areaPoints = `20,160 ${points} 380,160`;
+
+  return (
+    <div className="chart-card">
+      <div className="card-heading">
+        <div>
+          <h2>Payment activity</h2>
+          <p>Overview of your payment volume</p>
+        </div>
+
+        <select className="period-select" defaultValue="week">
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+          <option value="year">This year</option>
+        </select>
+      </div>
+
+      <div className="chart-summary">
+        <strong>KSh 84,650</strong>
+        <span className="chart-growth">
+          <ArrowUpRight size={15} /> 12.8%
+        </span>
+        <span className="chart-summary-label">compared with last week</span>
+      </div>
+
+      <div className="chart-container">
+        <div className="chart-y-labels">
+          <span>100k</span>
+          <span>75k</span>
+          <span>50k</span>
+          <span>25k</span>
+          <span>0</span>
+        </div>
+
+        <div className="chart-main">
+          <div className="chart-grid">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+
+          <svg
+            className="payment-chart"
+            viewBox="0 0 400 170"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Illustrative payment activity chart for Monday to Sunday"
+          >
+            <defs>
+              <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#15966b" stopOpacity=".20" />
+                <stop offset="100%" stopColor="#15966b" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+
+            <polygon points={areaPoints} fill="url(#chartFill)" />
+
+            <polyline
+              points={points}
+              fill="none"
+              stroke="#13865f"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+
+            {chartData.map((item, index) => (
+              <circle
+                key={item.day}
+                cx={20 + index * 60}
+                cy={150 - (item.value / maxValue) * 115}
+                r="4"
+                fill="#ffffff"
+                stroke="#13865f"
+                strokeWidth="2.5"
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+          </svg>
+
+          <div className="chart-x-labels">
+            {chartData.map((item) => (
+              <span key={item.day}>{item.day}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="chart-legend">
+        <span className="legend-dot" />
+        Payment volume
+        <span className="chart-legend-note">Illustrative demo data</span>
+      </div>
+    </div>
+  );
+}
+
+function PaymentMethods() {
+  return (
+    <div className="methods-card">
+      <div className="card-heading">
+        <div>
+          <h2>Payment methods</h2>
+          <p>Distribution by channel</p>
+        </div>
+
+        <button className="icon-button small-icon" aria-label="More options">
+          <MoreHorizontal size={20} />
+        </button>
+      </div>
+
+      <div className="methods-total">
+        <span>Total payments</span>
+        <strong>1,284</strong>
+      </div>
+
+      <div className="method-bar">
+        <span className="method-mpesa" />
+        <span className="method-wallet" />
+        <span className="method-api" />
+      </div>
+
+      <div className="method-list">
+        <div className="method-row">
+          <div className="method-name">
+            <span className="method-dot method-mpesa-dot" />
+            <span>M-Pesa</span>
+          </div>
+          <strong>68%</strong>
+        </div>
+
+        <div className="method-row">
+          <div className="method-name">
+            <span className="method-dot method-wallet-dot" />
+            <span>PayBiz Wallet</span>
+          </div>
+          <strong>22%</strong>
+        </div>
+
+        <div className="method-row">
+          <div className="method-name">
+            <span className="method-dot method-api-dot" />
+            <span>API Payments</span>
+          </div>
+          <strong>10%</strong>
+        </div>
+      </div>
+
+      <div className="methods-note">
+        <CreditCard size={17} />
+        <span>Connect payment providers as integrations are implemented.</span>
+      </div>
+    </div>
+  );
+}
+
+function TransactionTable({ searchTerm }) {
+  const filteredTransactions = transactions.filter((transaction) => {
+    const searchable =
+      `${transaction.customer} ${transaction.code} ${transaction.type}`.toLowerCase();
+
+    return searchable.includes(searchTerm.toLowerCase());
+  });
+
+  return (
+    <section className="transactions-card">
+      <div className="transactions-heading">
+        <div>
+          <h2>Recent transactions</h2>
+          <p>Track and manage payment activity</p>
+        </div>
+
+        <button className="button button-outline">
+          <Download size={16} />
+          Export
+        </button>
+      </div>
+
+      <div className="table-wrapper">
+        <table className="transactions-table">
+          <thead>
+            <tr>
+              <th>Transaction</th>
+              <th>Customer</th>
+              <th>Date &amp; time</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th aria-label="Actions" />
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredTransactions.map((transaction) => (
+              <tr key={transaction.code}>
+                <td>
+                  <div className="transaction-code">
+                    <span className="transaction-symbol">
+                      <ArrowDownRight size={16} />
+                    </span>
+                    <div>
+                      <strong>{transaction.code}</strong>
+                      <span>{transaction.type}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div className="customer-cell">
+                    <div className="avatar">{transaction.initials}</div>
+                    <span>{transaction.customer}</span>
+                  </div>
+                </td>
+
+                <td className="date-cell">{transaction.date}</td>
+
+                <td className="amount-cell">{money(transaction.amount)}</td>
+
+                <td>
+                  <span
+                    className={`status status-${transaction.status.toLowerCase()}`}
+                  >
+                    <span className="status-dot" />
+                    {transaction.status}
+                  </span>
+                </td>
+
+                <td>
+                  <button
+                    className="icon-button row-action"
+                    title={`View ${transaction.code}`}
+                    aria-label={`View ${transaction.code}`}
+                    onClick={() =>
+                      window.alert(
+                        `Demo transaction: ${transaction.code}\nCustomer: ${transaction.customer}\nAmount: ${money(transaction.amount)}\nStatus: ${transaction.status}`
+                      )
+                    }
+                  >
+                    <Eye size={17} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+
+            {filteredTransactions.length === 0 && (
+              <tr>
+                <td colSpan="6" className="empty-state">
+                  No matching transactions found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="table-footer">
+        <span>
+          Showing <strong>{filteredTransactions.length}</strong> of{" "}
+          <strong>{transactions.length}</strong> demo transactions
+        </span>
+
+        <button className="text-button">
+          View all transactions <ArrowUpRight size={15} />
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function Overview({ searchTerm, setSearchTerm, setActivePage }) {
+  return (
+    <>
+      <div className="welcome-row">
+        <div>
+          <div className="eyebrow">
+            <span className="welcome-dot" />
+            YOUR PAYMENT WORKSPACE
+          </div>
+          <h1>Good evening, Enock <span className="greeting">✦</span></h1>
+          <p className="welcome-subtitle">
+            Here&apos;s what&apos;s happening with your payments today.
+          </p>
+        </div>
+
+        <div className="welcome-actions">
+          <button
+            className="button button-outline"
+            onClick={() => setActivePage("Transactions")}
+          >
+            <ArrowLeftRight size={16} />
+            Transactions
+          </button>
+
+          <button
+            className="button button-primary"
+            onClick={() => setActivePage("Wallets")}
+          >
+            <Plus size={17} />
+            Manage wallet
+          </button>
+        </div>
+      </div>
+
+      <div className="demo-notice">
+        <div className="demo-notice-icon">
+          <ShieldCheck size={18} />
+        </div>
+        <div>
+          <strong>Demo workspace</strong>
+          <span>
+            The figures shown here are sample data, not live financial records.
+          </span>
+        </div>
+      </div>
+
+      <section className="stats-grid">
+        <StatCard
+          title="Total payment volume"
+          value="KSh 248,650"
+          change="12.8%"
+          positive
+          icon={CircleDollarSign}
+          iconClass="stat-green"
+          description="vs. previous period"
+        />
+
+        <StatCard
+          title="Successful payments"
+          value="1,284"
+          change="8.4%"
+          positive
+          icon={CheckCircle2}
+          iconClass="stat-blue"
+          description="vs. previous period"
+        />
+
+        <StatCard
+          title="Pending transactions"
+          value="12"
+          change="Awaiting review"
+          positive={false}
+          icon={Clock3}
+          iconClass="stat-orange"
+          description="Current demo status"
+        />
+
+        <StatCard
+          title="Transaction fees"
+          value="KSh 3,420"
+          change="This period"
+          positive
+          icon={Wallet}
+          iconClass="stat-purple"
+          description="Illustrative fee totals"
+        />
+      </section>
+
+      <section className="analytics-grid">
+        <PaymentChart />
+        <PaymentMethods />
+      </section>
+
+      <div className="table-search-row">
+        <div className="table-search">
+          <Search size={17} />
+          <input
+            type="search"
+            placeholder="Search transactions or customers..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+        </div>
+
+        <span className="table-period">Latest activity</span>
+      </div>
+
+      <TransactionTable searchTerm={searchTerm} />
+
+      <footer className="app-footer">
+        <span>© 2026 PayBiz. Payment infrastructure for businesses.</span>
+        <span>
+          <span className="footer-dot" />
+          Demo mode
+        </span>
+      </footer>
+    </>
+  );
+}
+
+function PlaceholderPage({ page }) {
+  const descriptions = {
+    Transactions: "Review, search and manage payment activity.",
+    Wallets: "Manage wallet balances, funding and transfers.",
+    Businesses: "Review registered businesses and account approvals.",
+    Agents: "Manage payment agents and agent float accounts.",
+    Reports: "Explore payment volume, fees and transaction reports.",
+    "Developer API": "Prepare business integrations with the PayBiz API.",
+    Settings: "Manage platform configuration and preferences.",
+  };
+
+  const icons = {
+    Transactions: ArrowLeftRight,
+    Wallets: Wallet,
+    Businesses: Building2,
+    Agents: Users,
+    Reports: ChartNoAxesCombined,
+    "Developer API": Code2,
+    Settings,
+  };
+
+  const Icon = icons[page] || LayoutDashboard;
+
+  return (
+    <section className="placeholder-page">
+      <div className="placeholder-icon">
+        <Icon size={30} />
+      </div>
+
+      <span className="eyebrow">PAYBIZ WORKSPACE</span>
+      <h1>{page}</h1>
+      <p>{descriptions[page]}</p>
+
+      <div className="placeholder-notice">
+        <ShieldCheck size={20} />
+        <div>
+          <strong>Next implementation stage</strong>
+          <span>
+            This section is a navigation placeholder. It is not yet connected
+            to the Django backend.
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function App() {
+  const [activePage, setActivePage] = useState("Overview");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <div className="app-shell">
+      <Sidebar
+        activePage={activePage}
+        setActivePage={setActivePage}
+        mobileOpen={mobileOpen}
+        closeMobile={() => setMobileOpen(false)}
+      />
+
+      <div className="main-shell">
+        <Header
+          activePage={activePage}
+          setMobileOpen={setMobileOpen}
+        />
+
+        <main className="page-content">
+          {activePage === "Overview" ? (
+            <Overview
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              setActivePage={setActivePage}
+            />
+          ) : (
+            <PlaceholderPage page={activePage} />
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}
